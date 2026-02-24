@@ -1,0 +1,33 @@
+{
+    "name": "@rag-preset/nestjs",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@nestjs/common": "^10.0.0",
+        "@nestjs/core": "^10.0.0",
+        "@rag-preset/core": "workspace:*",
+        "@rag-preset/embedder-openai": "workspace:*",
+        "@rag-preset/embedder-voyage": "workspace:*",
+        "@rag-preset/embedder-gemini": "workspace:*",
+        "@rag-preset/store-pgvector": "workspace:*",
+        "@rag-preset/store-qdrant": "workspace:*",
+        "@rag-preset/store-pinecone": "workspace:*",
+        "@rag-preset/loader-pdf": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/node": "^25.3.0",
+        "reflect-metadata": "^0.2.0",
+        "rxjs": "^7.8.1",
+        "typescript": "^5.0.0"
+    },
+    "peerDependencies": {
+        "@nestjs/common": "^10.0.0",
+        "@nestjs/core": "^10.0.0",
+        "reflect-metadata": "^0.1.13 || ^0.2.0",
+        "rxjs": "^7.8.1"
+    }
+}

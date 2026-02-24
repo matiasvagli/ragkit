@@ -1,0 +1,19 @@
+{
+    "name": "@rag-preset/store-pinecone",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@pinecone-database/pinecone": "^2.1.0",
+        "@rag-preset/core": "workspace:*",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^25.3.0",
+        "@types/uuid": "^9.0.8",
+        "typescript": "^5.0.0"
+    }
+}

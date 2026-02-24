@@ -1,0 +1,18 @@
+{
+    "name": "@rag-preset/store-qdrant",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@rag-preset/core": "workspace:*",
+        "@qdrant/js-client-rest": "^1.8.0",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/uuid": "^9.0.8",
+        "typescript": "^5.0.0"
+    }
+}

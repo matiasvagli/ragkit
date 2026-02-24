@@ -1,0 +1,42 @@
+{
+    "name": "@rag-preset/cli",
+    "version": "0.1.0",
+    "main": "dist/config.js",
+    "types": "dist/config.d.ts",
+    "private": true,
+    "bin": {
+        "ragkit": "./dist/cli.js"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/config.d.ts",
+            "default": "./dist/config.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc",
+        "e2e": "ts-node e2e.ts"
+    },
+    "dependencies": {
+        "@clack/prompts": "^1.0.1",
+        "@rag-preset/core": "workspace:*",
+        "@rag-preset/embedder-gemini": "workspace:*",
+        "@rag-preset/embedder-openai": "workspace:*",
+        "@rag-preset/embedder-voyage": "workspace:*",
+        "@rag-preset/loader-pdf": "workspace:*",
+        "@rag-preset/store-pgvector": "workspace:*",
+        "commander": "^14.0.3",
+        "picocolors": "^1.1.1"
+    },
+    "devDependencies": {
+        "@rag-preset/loader-docx": "workspace:*",
+        "@rag-preset/loader-txt": "workspace:*",
+        "@rag-preset/loader-url": "workspace:*",
+        "@rag-preset/store-pinecone": "workspace:*",
+        "@rag-preset/store-qdrant": "workspace:*",
+        "@types/pg": "^8.16.0",
+        "dotenv": "^16.4.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.0.0"
+    }
+}

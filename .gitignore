@@ -1,0 +1,39 @@
+# Dependencias
+node_modules/
+
+# Compilados TypeScript
+dist/
+build/
+
+# Archivos de entorno (¡nunca subir al repo!)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# pnpm
+.pnpm-store/
+
+# NestJS
+*.js.map
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# TypeScript incremental build cache
+*.tsbuildinfo
