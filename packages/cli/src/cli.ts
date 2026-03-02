@@ -4,6 +4,8 @@ import { initCommand } from './commands/init.js';
 import { useCommand } from './commands/use.js';
 import { ingestCommand } from './commands/ingest.js';
 import { statusCommand } from './commands/status.js';
+import { traceCommand } from './commands/trace.js';
+import { evalCommand } from './commands/eval.js';
 
 const program = new Command();
 
@@ -17,5 +19,8 @@ program.addCommand(initCommand);
 program.addCommand(useCommand);
 program.addCommand(ingestCommand);
 program.addCommand(statusCommand);
+program.addCommand(traceCommand);
+program.addCommand(evalCommand);
 
 program.parse(process.argv);
+

@@ -20,6 +20,7 @@
     "dependencies": {
         "@clack/prompts": "^1.0.1",
         "@rag-preset/core": "workspace:*",
+        "@rag-preset/eval": "workspace:*",
         "@rag-preset/embedder-gemini": "workspace:*",
         "@rag-preset/embedder-openai": "workspace:*",
         "@rag-preset/embedder-voyage": "workspace:*",

@@ -24,3 +24,15 @@ export interface StoreAdapter {
     store(docs: Document[], embeddings: number[][]): Promise<void>;
     similaritySearch(queryEmbedding: number[], topK: number): Promise<Document[]>;
 }
+
+export type RetrievedChunk = {
+    chunkId: string;
+    docId: string;
+    score: number;
+    text: string;
+    metadata?: Record<string, any>;
+};
+
+export interface Retriever {
+    retrieve(query: string, k: number): Promise<RetrievedChunk[]>;
+}

@@ -166,7 +166,100 @@ Mensajes de error amigables:
 
 ---
 
-#### `ragkit status`
+#### `ragkit trace <query>`
+
+Inspeccioná el retrieval en tiempo real — imprime los top-K resultados para una query:
+
+```
+$ ragkit trace "¿Cuál es la política de reembolsos?" --topk 5
+
+┌  ragkit trace
+│
+◇  ✓ Connected to pgvector
+
+🔍 Query: "¿Cuál es la política de reembolsos?"
+   Top 5 results:
+
+   ─── Rank 1 ─────────────────────────────────
+   Score   : 0.9234
+   DocId   : doc-legal-001
+   ChunkId : doc-legal-001-chunk-2
+   Preview : La política de reembolsos establece que el cliente puede solicitar...
+
+   ─── Rank 2 ─────────────────────────────────
+   Score   : 0.8712
+   ...
+
+└  ✔ Trace complete
+```
+
+Útil para diagnosticar qué está recuperando tu pipeline antes de correr una evaluación completa.
+
+---
+
+#### `ragkit eval`
+
+Corre una evaluación de retrieval completa contra un evalset:
+
+```
+$ ragkit eval --file evalset.yml --topk 5
+
+┌  ragkit eval
+│
+◇  ✓ Loaded 20 eval items
+◇  ✓ Connected to pgvector
+◇  ✓ Evaluation complete
+│
+◇  Retrieval Metrics: ──────────────────────────────╮
+│                                                   │
+│  ✔ Total queries  : 20                            │
+│  ✔ Hit@5          : 85.0%                         │
+│  ✔ Mean MRR       : 0.63                          │
+│  ✔ Mean Recall@5  : 72.0%                         │
+│                                                   │
+Failures (3):
+  – legal_003 → no expected doc found in top 5
+    Expected : doc-legal-003
+    Got top3 : doc-legal-001, doc-legal-002, doc-legal-004
+│
+└  ✔ Done
+```
+
+**Formato del evalset** (`evalset.yml`):
+
+```yaml
+- id: legal_001
+  question: ¿Cuál es la política de cancelación?
+  expected_doc_ids:
+    - doc-legal-001
+  tags:
+    - legal
+
+- id: faq_002
+  question: How do I reset my password?
+  expected_doc_ids:
+    - doc-faq-042
+```
+
+También soporta `.json`. Campos disponibles: `id`, `question`, `expected_doc_ids?`, `expected_chunk_ids?`, `must_include?`, `tags?`.
+
+**Opciones:**
+
+```bash
+ragkit eval --file evalset.yml --topk 5
+ragkit eval --file ./tests/evalset.json --topk 10 --config ./rag.config.ts
+```
+
+**Métricas computadas:**
+
+| Métrica | Descripción |
+|---|---|
+| **Hit@K** | % de queries con al menos un doc esperado en los top-K |
+| **Mean MRR** | Reciprocal Rank promedio (posición del primer hit) |
+| **Mean Recall@K** | % de docs esperados encontrados en los top-K |
+
+---
+
 
 Muestra configuración activa y verifica conectividad:
 
@@ -267,7 +360,8 @@ Para cambiar el modelo, editá el preset en `packages/core/src/presets/gemini.ts
 
 ```
 packages/
-  core/               ← pipeline engine, interfaces, presets, batching
+  core/               ← pipeline engine, interfaces (Retriever, EmbedderAdapter, ...)
+  eval/               ← @rag-preset/eval (EvalRunner, métricas, trace, dataset parser)
   embedders/
     openai/           ← @rag-preset/embedder-openai
     voyage/           ← @rag-preset/embedder-voyage (para claude)
@@ -282,6 +376,32 @@ packages/
     qdrant/           ← @rag-preset/store-qdrant
     pinecone/         ← @rag-preset/store-pinecone
   nestjs/             ← RagModule.forRoot() + @InjectRagPipeline
-  cli/                ← ragkit CLI (init, use, ingest, status)
+  cli/                ← ragkit CLI (init, use, ingest, status, trace, eval)
   example-nestjs/     ← app de ejemplo con endpoints REST
 ```
+
+---
+
+## Paquete `@rag-preset/eval`
+
+Usable también de forma programática para integrarlo en tus propios scripts o tests:
+
+```typescript
+import { EvalRunner, loadDataset } from '@rag-preset/eval';
+import { RagPipeline } from '@rag-preset/core';
+
+const pipeline = new RagPipeline({ /* ... */ });
+const retriever = pipeline.getRetriever();
+
+const dataset = loadDataset('./evalset.yml');
+const runner = new EvalRunner(retriever);
+const report = await runner.run(dataset, 5);
+
+console.log(report.summary);
+// { total: 20, hitRate: 0.85, meanMRR: 0.63, meanRecall: 0.72 }
+
+console.log(report.failures);
+// [{ id: 'legal_003', expectedDocIds: [...], retrievedDocIds: [...] }]
+```
+
+El `Retriever` es la única abstracción necesaria — no está acoplado a ningún embedder o store concreto.

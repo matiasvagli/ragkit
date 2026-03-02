@@ -1,4 +1,4 @@
-import { ChunkerAdapter, Document, EmbedderAdapter, LoaderAdapter, SanitizerAdapter, StoreAdapter } from '../interfaces';
+import { ChunkerAdapter, Document, EmbedderAdapter, LoaderAdapter, Retriever, RetrievedChunk, SanitizerAdapter, StoreAdapter } from '../interfaces';
 import { PresetRegistry, globalPresetRegistry } from '../presets/registry';
 
 export interface PipelineConfig {
@@ -21,6 +21,24 @@ export class RagPipeline {
 
     getConfig(): PipelineConfig {
         return this.config;
+    }
+
+    getRetriever(): Retriever {
+        const embedder = this.config.embedder;
+        const store = this.config.store;
+        return {
+            retrieve: async (query: string, k: number): Promise<RetrievedChunk[]> => {
+                const [queryEmbedding] = await embedder.embed([query]);
+                const docs = await store.similaritySearch(queryEmbedding, k);
+                return docs.map((doc: Document, index: number) => ({
+                    chunkId: doc.id,
+                    docId: (doc.metadata?.docId as string) ?? doc.id.split('-chunk-')[0] ?? doc.id,
+                    score: (doc.metadata?.score as number) ?? (1 - index * 0.05),
+                    text: doc.content,
+                    metadata: doc.metadata,
+                }));
+            },
+        };
     }
 
     async run(): Promise<void> {
